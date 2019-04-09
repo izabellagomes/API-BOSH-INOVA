@@ -1,0 +1,51 @@
+{% block content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+    {% if form %}
+    <form action="" method="POST">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.weight.label }}<br>
+            {{ form.weight(cols=32, rows=4) }}<br>
+            {% for error in form.weight.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.geolocation.label }}<br>
+            {{ form.geolocation(cols=32, rows=4) }}<br>
+            {% for error in form.geolocation.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.weighing_time.label }}<br>
+            {{ form.weighing_time(cols=32, rows=4) }}<br>
+            {% for error in form.weighing_time.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+    {% endif %}
+    {% for weighing in weighings %}
+    <p>
+    weight: <b>{{ weighing.weight }} kg </b>
+    geolocation: <b>[ {{ weighing.geolocation }} ] </b>
+    weighing_time: <b>{{ weighing.weighing_time }} </b>
+    </p>
+    {% endfor %}
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> Newer weighings
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    Older weighings <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+{% endblock %}
