@@ -26,7 +26,7 @@ class User(UserMixin, db.Model):
 class Weighing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     weight = db.Column(db.Float)
-    geolocation = db.Column(db.String(19))
+    geolocation = db.Column(db.String(40))
     weighing_time = db.Column(db.DateTime, index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 

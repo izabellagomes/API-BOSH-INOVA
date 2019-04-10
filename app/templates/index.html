@@ -1,5 +1,7 @@
+{% extends "base.html" %}
+
 {% block content %}
-    <h1>Hi, {{ current_user.username }}!</h1>
+    <h1> {{ current_user.username }}</h1>
     {% if form %}
     <form action="" method="POST">
         {{ form.hidden_tag() }}
@@ -27,13 +29,28 @@
         <p>{{ form.submit() }}</p>
     </form>
     {% endif %}
-    {% for weighing in weighings %}
-    <p>
-    weight: <b>{{ weighing.weight }} kg </b>
-    geolocation: <b>[ {{ weighing.geolocation }} ] </b>
-    weighing_time: <b>{{ weighing.weighing_time }} </b>
-    </p>
-    {% endfor %}
+    <table style="width: 70%">
+            <colgroup>
+               <col span="1" style="width: 15%;">
+               <col span="1" style="width: 40%;">
+               <col span="1" style="width: 15%;">
+            </colgroup>
+            
+        <tr>
+            <th class="">weight (kg)</th>
+            <th class="">geolocation</th>
+            <th class="">time</th>
+        </tr>
+        {% for weighing in weighings %}
+            <tr>
+                <td class="">{{ weighing.weight }}</td>
+                <td class="">{{ weighing.geolocation }}</td>
+                <td class="">{{ weighing.weighing_time }}</td>
+            </tr>
+        {% endfor %}
+        
+    </table>
+
     <nav aria-label="...">
         <ul class="pager">
             <li class="previous{% if not prev_url %} disabled{% endif %}">

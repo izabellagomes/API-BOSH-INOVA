@@ -11,10 +11,22 @@ from app.forms import WeighingForm
 from app.models import Weighing
 import datetime
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
-@login_required
+@app.route('/', methods=['GET'])
+@app.route('/index', methods=['GET'])
 def index():
+    page = request.args.get('page', 1, type=int)
+    weighings = Weighing.query.order_by(Weighing.weighing_time.desc()).paginate(
+        page, app.config['WEIGHINGS_PER_PAGE'], False)
+    next_url = url_for('index', page=weighings.next_num) \
+        if weighings.has_next else None
+    prev_url = url_for('index', page=weighings.prev_num) \
+        if weighings.has_prev else None
+    return render_template("index.html", title='Home', weighings=weighings.items,
+                          next_url=next_url, prev_url=prev_url)
+
+@app.route('/explore', methods=['GET', 'POST'])
+#@login_required
+def explore():
     form = WeighingForm()
     if form.validate_on_submit():
         weighing = Weighing(weight=form.weight.data,
@@ -24,30 +36,17 @@ def index():
         db.session.add(weighing)
         db.session.commit()
         flash('Weighing successfully saved.')
-        return redirect(url_for('index'))
+        return redirect(url_for('explore'))
     page = request.args.get('page', 1, type=int)
     weighings = Weighing.query.paginate(
-        page, app.config['WEIGHINGS_PER_PAGE'], False)
-    next_url = url_for('index', page=weighings.next_num) \
-        if weighings.has_next else None
-    prev_url = url_for('index', page=weighings.prev_num) \
-        if weighings.has_prev else None
-    return render_template('index.html', title='Home', form=form,
-                           weighings=weighings.items, next_url=next_url,
-                           prev_url=prev_url)
-
-@app.route('/explore')
-@login_required
-def explore():
-    page = request.args.get('page', 1, type=int)
-    weighings = Weighing.query.order_by(Weighing.weighing_time.desc()).paginate(
         page, app.config['WEIGHINGS_PER_PAGE'], False)
     next_url = url_for('explore', page=weighings.next_num) \
         if weighings.has_next else None
     prev_url = url_for('explore', page=weighings.prev_num) \
         if weighings.has_prev else None
-    return render_template("index.html", title='Explore', weighings=weighings.items,
-                          next_url=next_url, prev_url=prev_url)
+    return render_template('index.html', title='Register Weighing', form=form,
+                           weighings=weighings.items, next_url=next_url,
+                           prev_url=prev_url)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
